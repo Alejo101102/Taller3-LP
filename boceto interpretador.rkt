@@ -105,11 +105,11 @@
     (expresion (identifier) var-exp)
     (expresion ("Si" expresion "entonces" expresion "sino" expresion "finSi")
                condicional-exp)
-    (expresion ("declarar" "(" (arbno identifier "=" expresion ";") ")" "{" expresion "}")
+    (expresion ("declarar" "(" (separated-list identifier "=" expresion ";") ")" "{" expresion "}")
                variableLocal-exp)    
-    (expresion ("procedimiento" "(" (arbno identifier) ")" "haga" expresion "finProc")
+    (expresion ("procedimiento" "(" (separated-list identifier ",") ")" "haga" expresion "finProc")
                procedimiento-exp)
-    (expresion ("evaluar" expresion "(" (arbno expresion ",") ")" "finEval")
+    (expresion ("evaluar" expresion "(" (separated-list expresion ",") ")" "finEval")
                app-exp)    
     (expresion ("let" (arbno identifier "=" expresion) "in" expresion)
                 let-exp)
@@ -125,7 +125,7 @@
      ;           proc-exp)
     ;(expresion ( "(" expression (arbno expression) ")")
      ;           app-exp)
-    ;;;;;;
+    ;;;;;; (arbno identifier "=" expresion ";")
 
     (primitiva-binaria ("+") primitiva-suma)
     (primitiva-binaria ("~") primitiva-resta)
@@ -352,6 +352,12 @@
   (lambda (pgm)
     (cases programa pgm
       (un-programa (body)
+                 (evaluar-expresion body (init-env))))))
+
+
+
+
+
                  (evaluar-expresion body (init-env))))))
 
 
