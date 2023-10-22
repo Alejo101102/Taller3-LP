@@ -106,25 +106,25 @@
     (expresion ("Si" expresion "entonces" expresion "sino" expresion "finSi")
                condicional-exp)
     (expresion ("declarar" "(" (separated-list identifier "=" expresion ";") ")" "{" expresion "}")
-               variableLocal-exp)    
+               variableLocal-exp)
     (expresion ("procedimiento" "(" (separated-list identifier ",") ")" "haga" expresion "finProc")
                procedimiento-exp)
     (expresion ("evaluar" expresion "(" (separated-list expresion ",") ")" "finEval")
-               app-exp)    
+               app-exp)
     (expresion ("let" (arbno identifier "=" expresion) "in" expresion)
-                let-exp)
+               let-exp)
     (expresion ("let-recursivo" "{" (arbno identifier "(" (separated-list identifier ",") ")" "=" expresion) "}" "en" expresion)
                letrec-exp)
     (expresion
      ("(" expresion primitiva-binaria expresion")") primapp-bin-exp)
     (expresion
      (primitiva-unaria "(" expresion ")") primapp-un-exp)
-    
+
     ; características adicionales
     ;(expresion ("proc" "(" (separated-list identifier ",") ")" expression)
-     ;           proc-exp)
+    ;           proc-exp)
     ;(expresion ( "(" expression (arbno expression) ")")
-     ;           app-exp)
+    ;           app-exp)
     ;;;;;; (arbno identifier "=" expresion ";")
 
     (primitiva-binaria ("+") primitiva-suma)
@@ -150,19 +150,19 @@
       (texto-lit (string) "\"" string "\"")
       (var-exp (id) (apply-env env id))
       (condicional-exp (test-exp true-exp false-exp)
-              (if (true-value? (evaluar-expresion test-exp env))
-                  (evaluar-expresion true-exp env)
-                  (evaluar-expresion false-exp env)))
-      (variableLocal-exp (ids exps cuerpo)               
-                         (let ((values (eval-rands exps env)))                 
-                           (let ((extended-env (extend-env ids values env)))                   
-                             (evaluar-expresion cuerpo extended-env))))      
+                       (if (true-value? (evaluar-expresion test-exp env))
+                           (evaluar-expresion true-exp env)
+                           (evaluar-expresion false-exp env)))
+      (variableLocal-exp (ids exps cuerpo)
+                         (let ((values (eval-rands exps env)))
+                           (let ((extended-env (extend-env ids values env)))
+                             (evaluar-expresion cuerpo extended-env))))
       (let-exp (ids rands body)
                (let ((args (eval-rands rands env)))
                  (evaluar-expresion body
-                                  (extend-env ids args env))))
+                                    (extend-env ids args env))))
       (procedimiento-exp (ids body)
-                (cerradura ids body env))
+                         (cerradura ids body env))
       (app-exp (rator rands)
                (let ((proc (evaluar-expresion rator env))
                      (args (eval-rands rands env)))
@@ -172,12 +172,12 @@
                                  "Attempt to apply non-procedure ~s" proc))))
       (letrec-exp (proc-names idss bodies letrec-body)
                   (evaluar-expresion letrec-body
-                                   (extend-env-recursively proc-names idss bodies env)))
+                                     (extend-env-recursively proc-names idss bodies env)))
       (primapp-bin-exp (exp1 exp-bin exp2)
                        (let ((val1 (evaluar-expresion exp1 env))
                              (val2 (evaluar-expresion exp2 env)))
                          (apply-binary-primitive val1 exp-bin val2)))
-      
+
       (primapp-un-exp (exp-un exp)
                       (let ((val (evaluar-expresion exp env)))
                         (apply-unary-primitive exp-un val))))))
@@ -226,8 +226,8 @@
       ((pred (car ls)) 0)
       (else (let ((list-index-r (list-index pred (cdr ls))))
               (if (number? list-index-r)
-                (+ list-index-r 1)
-                #f))))))
+                  (+ list-index-r 1)
+                  #f))))))
 
 ;*******************************************************************
 ;Procedimientos
@@ -242,7 +242,7 @@
   (lambda (proc args)
     (cases procVal proc
       (cerradura (ids body env)
-               (evaluar-expresion body (extend-env ids args env))))))
+                 (evaluar-expresion body (extend-env ids args env))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Ambientes
@@ -262,9 +262,9 @@
 
 ;empty-env:      -> enviroment
 ;función que crea un ambiente vacío
-(define empty-env  
+(define empty-env
   (lambda ()
-    (empty-env-record)))       ;llamado al constructor de ambiente vacío 
+    (empty-env-record)))       ;llamado al constructor de ambiente vacío
 
 
 ;extend-env: <list-of symbols> <list-of numbers> enviroment -> enviroment
@@ -296,8 +296,8 @@
                                        (let ((pos (list-find-position sym proc-names)))
                                          (if (number? pos)
                                              (cerradura (list-ref idss pos)
-                                                      (list-ref bodies pos)
-                                                      env)
+                                                        (list-ref bodies pos)
+                                                        env)
                                              (apply-env old-env sym)))))))
 
 ;Ambiente inicial
@@ -334,10 +334,10 @@
 
 (define interpretador
   (sllgen:make-rep-loop  "--> "
-    (lambda (pgm) (evaluar-programa pgm)) 
-    (sllgen:make-stream-parser 
-      scanner-spec-simple-interpreter
-      grammar-simple-interpreter)))
+                         (lambda (pgm) (evaluar-programa pgm))
+                         (sllgen:make-stream-parser
+                          scanner-spec-simple-interpreter
+                          grammar-simple-interpreter)))
 
 
 
@@ -352,14 +352,6 @@
   (lambda (pgm)
     (cases programa pgm
       (un-programa (body)
-                 (evaluar-expresion body (init-env))))))
+                   (evaluar-expresion body (init-env))))))
 
-
-
-
-
-                 (evaluar-expresion body (init-env))))))
-
-
-
-
+;  (evaluar-expresion body (init-env))))))

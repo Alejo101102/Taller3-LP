@@ -4,7 +4,7 @@
 
 
 ;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;
-;; INTEGRANTES 
+;; INTEGRANTES
 ; Alejandro Guerrero Cano (2179652)- Alejo101102
 ; alejandro.cano@correounivalle.edu.co
 
@@ -41,6 +41,3 @@
     (primitive ("longitud") primitiva-longitud)
     (primitive ("add1") primitiva-add1)
     (primitive ("sub1") primitiva-sub1)))
-
-
-
