@@ -5,24 +5,6 @@
 ;;;;; Interpretador para lenguaje con condicionales, ligadura local y procedimientos
 
 ;; La definición BNF para las expresiones del lenguaje:
-;;
-;;  <programa> :=  <expresion>
-;;                 un-programa (exp)
-;;  <expresion>    ::= <numero>
-;;                      <lit-exp (datum)>
-;;                  ::= <identifier>
-;;                      <var-exp (id)>
-;;                  ::= <primitive> ({<expression>}*(,))
-;;                      <primapp-exp (prim rands)>
-;;                  ::= if <expresion> then <expresion> else <expression>
-;;                      <if-exp (exp1 exp2 exp23)>
-;;                  ::= let {identifier = <expression>}* in <expression>
-;;                      <let-exp (ids rands body)>
-;;                  ::= proc({<identificador>}*(,)) <expression>
-;;                      <proc-exp (ids body)>
-;;                  ::= (<expression> {<expression>}*)
-;;                      <app-exp proc rands>
-
 ;;  <programa> :=  <expresion>
 ;;                 un-programa (exp)
 ;;
@@ -93,7 +75,9 @@
     (number
      ("-" digit (arbno digit) "." (arbno digit)) number)
     (string
-     ("\"" (arbno (not #\")) "\"") string)
+       ("\""
+   (arbno (not #\")) 
+   "\"") symbol)
     ))
 
 ;Especificación Sintáctica (gramática)
@@ -101,7 +85,7 @@
 (define grammar-simple-interpreter
   '((programa (expresion) un-programa)
     (expresion (number) numero-lit)
-    (expresion ("\"" string "\"") texto-lit)
+    (expresion (string) texto-lit)
     (expresion (identifier) var-exp)
     (expresion ("Si" expresion "entonces" expresion "sino" expresion "finSi")
                condicional-exp)
@@ -119,13 +103,6 @@
      ("(" expresion primitiva-binaria expresion")") primapp-bin-exp)
     (expresion
      (primitiva-unaria "(" expresion ")") primapp-un-exp)
-    
-    ; características adicionales
-    ;(expresion ("proc" "(" (separated-list identifier ",") ")" expression)
-     ;           proc-exp)
-    ;(expresion ( "(" expression (arbno expression) ")")
-     ;           app-exp)
-    ;;;;;; (arbno identifier "=" expresion ";")
 
     (primitiva-binaria ("+") primitiva-suma)
     (primitiva-binaria ("~") primitiva-resta)
@@ -207,6 +184,7 @@
       (primitiva-longitud () ('length val))
       (primitiva-add1 () (+ val 1))
       (primitiva-sub1 () (- val 1)))))
+
 ;true-value?: determina si un valor dado corresponde a un valor booleano falso o verdadero
 (define true-value?
   (lambda (x)
@@ -355,11 +333,13 @@
                  (evaluar-expresion body (init-env))))))
 
 
+#|
+let-recursivo {
+  @fact(@x) = Si @x entonces
+(@x*evaluar @fact(sub1(@x)) finEval)
+sino 1 finSi
+} en evaluar @fact(6) finEval
 
 
-
-                 (evaluar-expresion body (init-env))))))
-
-
-
+|#
 
