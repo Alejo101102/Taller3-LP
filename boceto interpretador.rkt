@@ -207,6 +207,7 @@
       (primitiva-longitud () ('length val))
       (primitiva-add1 () (+ val 1))
       (primitiva-sub1 () (- val 1)))))
+
 ;true-value?: determina si un valor dado corresponde a un valor booleano falso o verdadero
 (define true-value?
   (lambda (x)
@@ -353,13 +354,3 @@
     (cases programa pgm
       (un-programa (body)
                  (evaluar-expresion body (init-env))))))
-
-
-
-
-
-                 (evaluar-expresion body (init-env))))))
-
-
-
-
