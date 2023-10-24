@@ -2,7 +2,7 @@
 
 ;;Ejecuta esto en el archivo del interpretador!!!
 
-#| Punto f
+#| Punto E
 % Forma correcta creo* ----- No Funciona
 declarar (
    @integrantes= procedimiento() % No recibe nada
