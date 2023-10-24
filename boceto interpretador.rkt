@@ -340,19 +340,18 @@ let-recursivo {
 sino 1 finSi
 } en evaluar @fact(6) finEval
 
+punto a. Área circulo
+
+declarar (
+
+      @radio=2.5;
+
+      @areaCirculo= procedimiento(@r) haga ((3.14*@r)*@r) finProc
+
+     ) { 
+
+         evaluar @areaCirculo (@radio) finEval  
+
+       }
 
 |#
-
-;; punto a
-
-; Declarar el radio
-(define @radio 2.5)
-
-; Definir el procedimiento areaCirculo que calcula el área de un círculo
-(define (areaCirculo @radio)
-  (let ((PI 3.14159))
-    (* PI (* @radio @radio))))
-
-; Invocar el procedimiento areaCirculo
-(define resultado (areaCirculo @radio))
-(display resultado)
