@@ -330,27 +330,18 @@ let-recursivo {
 sino 1 finSI
 } en evaluar @fact(6) finEval
 
-Punto d. multiplicar
-let-recursivo {
-  @multiplicar(@x,@y) = Si @x entonces
-   (@y + evaluar @multiplicar(sub1(@x),@y) finEval)
-   sino 0 finSI
-} en evaluar @multiplicar(10,3) finEval
+punto a. Área circulo
 
-Punto d. restar
-let-recursivo {
-  @restar(@x,@y) = Si @y entonces
-   evaluar @restar(sub1(@x), sub1(@y)) finEval
-   sino @x finSI
-} en evaluar @restar(10,3) finEval
+declarar (
 
-  @radio = 2.5;
-  @areaCirculo = procedimiento(@r) haga
-    // Fórmula para calcular el área de un círculo: A = π * r * r
-    @resultado = 3.14159265359 * @r * @r;
-    @resultado
-  finProc
+      @radio=2.5;
 
+      @areaCirculo= procedimiento(@r) haga ((3.14*@r)*@r) finProc
+
+     ) {
+
+         evaluar @areaCirculo (@radio) finEval
+
+       }
 
 |#
-
