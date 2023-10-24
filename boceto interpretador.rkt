@@ -342,7 +342,24 @@ declarar (
        }
 
 ;*******************************************************************************************
-% Punto E
+% Punto D. Multiplicar y restar
+
+% MULTIPLICAR
+let-recursivo {
+  @multiplicar(@x,@y) = Si @x entonces
+   (@y + evaluar @multiplicar(sub1(@x),@y) finEval)
+   sino 0 finSI
+} en evaluar @multiplicar(10,3) finEval
+
+% RESTAR
+let-recursivo {
+  @restar(@x,@y) = Si @y entonces
+   evaluar @restar(sub1(@x), sub1(@y)) finEval
+   sino @x finSI
+} en evaluar @restar(10,3) finEval
+
+;*******************************************************************************************
+% Punto E. Decorador con prefijo "Hola"
 
 declarar (
    @integrantes= procedimiento() % No recibe nada
@@ -351,11 +368,11 @@ declarar (
    @saludar= procedimiento(@proc)      % Recibe un procedimiento
                            haga
                              declarar(
-                                @sufijo= "Hola: ";
+                                @prefijo= "Hola: ";
                                 @palabra= declarar()
                                           {evaluar @proc () finEval}      % Evalua el proceso para obtener el String
                              ){
-                               procedimiento() haga (@sufijo concat @palabra) finProc      % Retorna el proceso que concatena
+                               procedimiento() haga (@prefijo concat @palabra) finProc      % Retorna el proceso que concatena
                              }
                              finProc
 ){
@@ -367,7 +384,8 @@ declarar (
 }
 
 ;*******************************************************************************************
-% Punto F
+% Punto F. Decorador con prefijo "Hola: " y sufijo " Estudiantes de FLP"
+
 declarar (
    @integrantes= procedimiento() % No recibe nada
                     haga "Alejandro-Juan-Y-Sebastian" % Retorna el String
@@ -375,12 +393,12 @@ declarar (
    @saludar= procedimiento(@proc)      % Recibe un procedimiento
                            haga
                              declarar(
-                                @sufijo= "Hola: ";
-                                @prefijo= " Estudiantes de FLP";
+                                @prefijo= "Hola: ";
+                                @sufijo= " Estudiantes de FLP";
                                 @palabra= declarar()
                                           {evaluar @proc () finEval}      % Evalua el proceso para obtener el String
                              ){
-                               procedimiento() haga ((@sufijo concat @palabra) concat @prefijo) finProc      % Retorna el proceso que concatena
+                               procedimiento() haga ((@prefijo concat @palabra) concat @sufijo) finProc      % Retorna el proceso que concatena
                              }
                              finProc
 
