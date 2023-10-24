@@ -330,18 +330,67 @@ let-recursivo {
 sino 1 finSI
 } en evaluar @fact(6) finEval
 
-punto a. Área circulo
+
+;*******************************************************************************************
+% Punto A. Área circulo
 
 declarar (
-
       @radio=2.5;
-
       @areaCirculo= procedimiento(@r) haga ((3.14*@r)*@r) finProc
-
-     ) {
-
+     ){
          evaluar @areaCirculo (@radio) finEval
-
        }
 
+;*******************************************************************************************
+% Punto E
+
+declarar (
+   @integrantes= procedimiento() % No recibe nada
+                    haga "Alejandro-Juan-Y-Sebastian" % Retorna el String
+                 finProc;
+   @saludar= procedimiento(@proc)      % Recibe un procedimiento
+                           haga
+                             declarar(
+                                @sufijo= "Hola: ";
+                                @palabra= declarar()
+                                          {evaluar @proc () finEval}      % Evalua el proceso para obtener el String
+                             ){
+                               procedimiento() haga (@sufijo concat @palabra) finProc      % Retorna el proceso que concatena
+                             }
+                             finProc
+){
+   declarar(
+      @decorate= evaluar @saludar(@integrantes) finEval      % Creacion del decorador
+   ){
+      evaluar @decorate () finEval      % Deberá retornar "Hola: Alejandro-Juan-Y-Sebastian"
+   }
+}
+
+;*******************************************************************************************
+% Punto F
+declarar (
+   @integrantes= procedimiento() % No recibe nada
+                    haga "Alejandro-Juan-Y-Sebastian" % Retorna el String
+                 finProc;
+   @saludar= procedimiento(@proc)      % Recibe un procedimiento
+                           haga
+                             declarar(
+                                @sufijo= "Hola: ";
+                                @prefijo= " Estudiantes de FLP";
+                                @palabra= declarar()
+                                          {evaluar @proc () finEval}      % Evalua el proceso para obtener el String
+                             ){
+                               procedimiento() haga ((@sufijo concat @palabra) concat @prefijo) finProc      % Retorna el proceso que concatena
+                             }
+                             finProc
+
+){
+   declarar(
+      @decorate= evaluar @saludar(@integrantes) finEval      % Creacion del decorador
+   ){
+      evaluar @decorate () finEval      % Deberá retornar "Hola: Alejandro-Juan-Y-Sebastian Estudiantes de FLP"
+    }
+}
 |#
+
+(interpretador)
