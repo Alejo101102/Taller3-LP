@@ -117,7 +117,7 @@
   (lambda (exp env)
     (cases expresion exp
       (numero-lit (num) num)
-      (texto-lit (string) "\"" string "\"")
+      (texto-lit (string) string)
       (var-exp (id) (buscar-variable env id))
       (condicional-exp (test-exp true-exp false-exp)
               (if (valor-verdad? (evaluar-expresion test-exp env))
