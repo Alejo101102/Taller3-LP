@@ -321,6 +321,10 @@
       (un-programa (body)
                    (evaluar-expresion body (ambiente-inicial))))))
 
+;*******************************************************************************************
+;; AQUI EMPIEZA EL LAB PARA EL PUNTO E
+
+
 #| Punto f
 declarar (
    @integrantes= procedimiento() % No recibe nada
