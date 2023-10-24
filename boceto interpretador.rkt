@@ -343,3 +343,16 @@ sino 1 finSi
 
 |#
 
+;; punto a
+
+; Declarar el radio
+(define @radio 2.5)
+
+; Definir el procedimiento areaCirculo que calcula el área de un círculo
+(define (areaCirculo @radio)
+  (let ((PI 3.14159))
+    (* PI (* @radio @radio))))
+
+; Invocar el procedimiento areaCirculo
+(define resultado (areaCirculo @radio))
+(display resultado)
