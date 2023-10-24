@@ -72,7 +72,7 @@
     (number
      ("-" digit (arbno digit) "." (arbno digit)) number)
     (string
-     ("\"" (arbno (not #\")) "\"") symbol)
+     ("\"" (arbno (not #\")) "\"") string)
     ))
 
 ;Especificación Sintáctica (gramática)
@@ -180,7 +180,7 @@
     (not (zero? x))))
 
 ; funciones auxiliares para encontrar la posición de un símbolo
-; en la lista de símbolos de unambiente
+; en la lista de símbolos de un ambiente
 
 (define list-find-position
   (lambda (sym los)
