@@ -5,24 +5,6 @@
 ;;;;; Interpretador para lenguaje con condicionales, ligadura local y procedimientos
 
 ;; La definición BNF para las expresiones del lenguaje:
-;;
-;;  <programa> :=  <expresion>
-;;                 un-programa (exp)
-;;  <expresion>    ::= <numero>
-;;                      <lit-exp (datum)>
-;;                  ::= <identifier>
-;;                      <var-exp (id)>
-;;                  ::= <primitive> ({<expression>}*(,))
-;;                      <primapp-exp (prim rands)>
-;;                  ::= if <expresion> then <expresion> else <expression>
-;;                      <if-exp (exp1 exp2 exp23)>
-;;                  ::= let {identifier = <expression>}* in <expression>
-;;                      <let-exp (ids rands body)>
-;;                  ::= proc({<identificador>}*(,)) <expression>
-;;                      <proc-exp (ids body)>
-;;                  ::= (<expression> {<expression>}*)
-;;                      <app-exp proc rands>
-
 ;;  <programa> :=  <expresion>
 ;;                 un-programa (exp)
 ;;
@@ -46,9 +28,6 @@
 ;;
 ;;              := evaluar <expresion> (<expresion> ',')* finEval
 ;;                app-exp (exp epxs)
-;;
-;;              ::= let {<dentificador> = <expresion>}* in <expresion>
-;;                let-exp (ids rands body)
 ;;
 ;;              := (<expresion> <primitiva-binaria> <expresion>)
 ;;                primapp-bin-exp (exp1 prim-binaria exp2)
@@ -93,7 +72,7 @@
     (number
      ("-" digit (arbno digit) "." (arbno digit)) number)
     (string
-     ("\"" (arbno (not #\")) "\"") string)
+     ("\"" (arbno (not #\")) "\"") symbol)
     ))
 
 ;Especificación Sintáctica (gramática)
@@ -101,9 +80,9 @@
 (define grammar-simple-interpreter
   '((programa (expresion) un-programa)
     (expresion (number) numero-lit)
-    (expresion ("\"" string "\"") texto-lit)
+    (expresion (string) texto-lit)
     (expresion (identifier) var-exp)
-    (expresion ("Si" expresion "entonces" expresion "sino" expresion "finSi")
+    (expresion ("Si" expresion "entonces" expresion "sino" expresion "finSI")
                condicional-exp)
     (expresion ("declarar" "(" (separated-list identifier "=" expresion ";") ")" "{" expresion "}")
                variableLocal-exp)
@@ -111,21 +90,12 @@
                procedimiento-exp)
     (expresion ("evaluar" expresion "(" (separated-list expresion ",") ")" "finEval")
                app-exp)
-    (expresion ("let" (arbno identifier "=" expresion) "in" expresion)
-               let-exp)
     (expresion ("let-recursivo" "{" (arbno identifier "(" (separated-list identifier ",") ")" "=" expresion) "}" "en" expresion)
                letrec-exp)
     (expresion
      ("(" expresion primitiva-binaria expresion")") primapp-bin-exp)
     (expresion
      (primitiva-unaria "(" expresion ")") primapp-un-exp)
-
-    ; características adicionales
-    ;(expresion ("proc" "(" (separated-list identifier ",") ")" expression)
-    ;           proc-exp)
-    ;(expresion ( "(" expression (arbno expression) ")")
-    ;           app-exp)
-    ;;;;;; (arbno identifier "=" expresion ";")
 
     (primitiva-binaria ("+") primitiva-suma)
     (primitiva-binaria ("~") primitiva-resta)
@@ -148,19 +118,15 @@
     (cases expresion exp
       (numero-lit (num) num)
       (texto-lit (string) "\"" string "\"")
-      (var-exp (id) (apply-env env id))
+      (var-exp (id) (buscar-variable env id))
       (condicional-exp (test-exp true-exp false-exp)
-                       (if (true-value? (evaluar-expresion test-exp env))
+                       (if (valor-verdad? (evaluar-expresion test-exp env))
                            (evaluar-expresion true-exp env)
                            (evaluar-expresion false-exp env)))
       (variableLocal-exp (ids exps cuerpo)
                          (let ((values (eval-rands exps env)))
                            (let ((extended-env (extend-env ids values env)))
                              (evaluar-expresion cuerpo extended-env))))
-      (let-exp (ids rands body)
-               (let ((args (eval-rands rands env)))
-                 (evaluar-expresion body
-                                    (extend-env ids args env))))
       (procedimiento-exp (ids body)
                          (cerradura ids body env))
       (app-exp (rator rands)
@@ -199,16 +165,17 @@
       (primitiva-resta () (- val1 val2))
       (primitiva-div () (/ val1 val2))
       (primitiva-multi () (* val1 val2))
-      (primitiva-concat () ('concat val1 val2)))))
+      (primitiva-concat () (string-append val1 val2)))))
 
 (define apply-unary-primitive
   (lambda (un-op val)
     (cases primitiva-unaria un-op
-      (primitiva-longitud () ('length val))
+      (primitiva-longitud () (string-length val))
       (primitiva-add1 () (+ val 1))
       (primitiva-sub1 () (- val 1)))))
-;true-value?: determina si un valor dado corresponde a un valor booleano falso o verdadero
-(define true-value?
+
+;valor-verdad?: determina si un valor dado corresponde a un valor booleano falso o verdadero
+(define valor-verdad?
   (lambda (x)
     (not (zero? x))))
 
@@ -235,7 +202,7 @@
   (cerradura
    (lista-ID (list-of symbol?))
    (exp expresion?)
-   (amb environment?)))
+   (amb ambiente?)))
 
 ;apply-procedure: evalua el cuerpo de un procedimientos en el ambiente extendido correspondiente
 (define apply-procedure
@@ -248,19 +215,19 @@
 ;Ambientes
 
 ;definición del tipo de dato ambiente
-(define-datatype environment environment?
+(define-datatype ambiente ambiente?
   (empty-env-record)
   (extended-env-record (syms (list-of symbol?))
                        (vals (list-of scheme-value?))
-                       (env environment?))
+                       (env ambiente?))
   (recursively-extended-env-record (proc-names (list-of symbol?))
                                    (idss (list-of (list-of symbol?)))
                                    (bodies (list-of expresion?))
-                                   (env environment?)))
+                                   (env ambiente?)))
 
 (define scheme-value? (lambda (v) #t))
 
-;empty-env:      -> enviroment
+;empty-env:      -> ambiente
 ;función que crea un ambiente vacío
 (define empty-env
   (lambda ()
@@ -273,7 +240,7 @@
   (lambda (syms vals env)
     (extended-env-record syms vals env)))
 
-;extend-env-recursively: <list-of symbols> <list-of <list-of symbols>> <list-of expressions> environment -> environment
+;extend-env-recursively: <list-of symbols> <list-of <list-of symbols>> <list-of expressions> ambiente -> ambiente
 ;función que crea un ambiente extendido para procedimientos recursivos
 (define extend-env-recursively
   (lambda (proc-names idss bodies old-env)
@@ -282,27 +249,27 @@
 
 
 ;función que busca un símbolo en un ambiente
-(define apply-env
+(define buscar-variable
   (lambda (env sym)
-    (cases environment env
+    (cases ambiente env
       (empty-env-record ()
                         (eopl:error 'empty-env "No binding for ~s" sym))
       (extended-env-record (syms vals old-env)
                            (let ((pos (list-find-position sym syms)))
                              (if (number? pos)
                                  (list-ref vals pos)
-                                 (apply-env old-env sym))))
+                                 (buscar-variable old-env sym))))
       (recursively-extended-env-record (proc-names idss bodies old-env)
                                        (let ((pos (list-find-position sym proc-names)))
                                          (if (number? pos)
                                              (cerradura (list-ref idss pos)
                                                         (list-ref bodies pos)
                                                         env)
-                                             (apply-env old-env sym)))))))
+                                             (buscar-variable old-env sym)))))))
 
 ;Ambiente inicial
 
-(define init-env
+(define ambiente-inicial
   (lambda ()
     (extend-env
      '(@a @b @c @d @e)
@@ -352,6 +319,38 @@
   (lambda (pgm)
     (cases programa pgm
       (un-programa (body)
-                   (evaluar-expresion body (init-env))))))
+                   (evaluar-expresion body (ambiente-inicial))))))
 
-;  (evaluar-expresion body (init-env))))))
+
+#|
+;Ejemplo de las diapositivas, tranformado al lenguaje diseñado
+let-recursivo {
+  @fact(@x) = Si @x entonces
+(@x*evaluar @fact(sub1(@x)) finEval)
+sino 1 finSI
+} en evaluar @fact(6) finEval
+
+Punto d. multiplicar
+let-recursivo {
+  @multiplicar(@x,@y) = Si @x entonces
+   (@y + evaluar @multiplicar(sub1(@x),@y) finEval)
+   sino 0 finSI
+} en evaluar @multiplicar(10,3) finEval
+
+Punto d. restar
+let-recursivo {
+  @restar(@x,@y) = Si @y entonces
+   evaluar @restar(sub1(@x), sub1(@y)) finEval
+   sino @x finSI
+} en evaluar @restar(10,3) finEval
+
+  @radio = 2.5;
+  @areaCirculo = procedimiento(@r) haga
+    // Fórmula para calcular el área de un círculo: A = π * r * r
+    @resultado = 3.14159265359 * @r * @r;
+    @resultado
+  finProc
+
+
+|#
+
