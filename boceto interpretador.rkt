@@ -87,7 +87,7 @@
     (expresion (number) numero-lit)
     (expresion (string) texto-lit)
     (expresion (identifier) var-exp)
-    (expresion ("Si" expresion "entonces" expresion "sino" expresion "finSi")
+    (expresion ("Si" expresion "entonces" expresion "sino" expresion "finSI")
                condicional-exp)
     (expresion ("declarar" "(" (separated-list identifier "=" expresion ";") ")" "{" expresion "}")
                variableLocal-exp)    
@@ -176,12 +176,12 @@
       (primitiva-resta () (- val1 val2))
       (primitiva-div () (/ val1 val2))
       (primitiva-multi () (* val1 val2))
-      (primitiva-concat () ('concat val1 val2)))))
+      (primitiva-concat () (string-append val1 val2)))))
 
 (define apply-unary-primitive
   (lambda (un-op val)
     (cases primitiva-unaria un-op
-      (primitiva-longitud () ('length val))
+      (primitiva-longitud () (string-length val))
       (primitiva-add1 () (+ val 1))
       (primitiva-sub1 () (- val 1)))))
 
@@ -334,12 +334,26 @@
 
 
 #|
+;Ejemplo de las diapositivas, tranformado al lenguaje diseñado
 let-recursivo {
   @fact(@x) = Si @x entonces
 (@x*evaluar @fact(sub1(@x)) finEval)
-sino 1 finSi
+sino 1 finSI
 } en evaluar @fact(6) finEval
 
+Punto d. multiplicar
+let-recursivo {
+  @multiplicar(@x,@y) = Si @x entonces
+   (@y + evaluar @multiplicar(sub1(@x),@y) finEval)
+   sino 0 finSI
+} en evaluar @multiplicar(10,3) finEval
+
+Punto d. restar
+let-recursivo {
+  @restar(@x,@y) = Si @y entonces
+   evaluar @restar(sub1(@x), sub1(@y)) finEval
+   sino @x finSI
+} en evaluar @restar(10,3) finEval
 
 |#
 
