@@ -369,14 +369,14 @@ declarar (
 let-recursivo {
   @fact(@x) = Si @x entonces
 (@x*evaluar @fact(sub1(@x)) finEval)
-sino 1 finSi
+sino 1 finSI
 } en evaluar @fact(5) finEval
 
 % FACTORIAL DE 10
 let-recursivo {
   @fact(@x) = Si @x entonces
 (@x*evaluar @fact(sub1(@x)) finEval)
-sino 1 finSi
+sino 1 finSI
 } en evaluar @fact(10) finEval
 
 
@@ -463,3 +463,4 @@ declarar (
       evaluar @decorate () finEval      % Deberá retornar "Hola: Alejandro-Juan-Y-Sebastian Estudiantes de FLP"
     }
 }
+|#
