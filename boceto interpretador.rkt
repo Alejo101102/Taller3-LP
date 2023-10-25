@@ -334,17 +334,12 @@
 
 
 #|
-let-recursivo {
-  @fact(@x) = Si @x entonces
-(@x*evaluar @fact(sub1(@x)) finEval)
-sino 1 finSi
-} en evaluar @fact(6) finEval
 
 punto a. Área circulo
 
 declarar (
 
-      @radio=2.5;
+      @radio=2.5
 
       @areaCirculo= procedimiento(@r) haga ((3.14*@r)*@r) finProc
 
@@ -353,5 +348,20 @@ declarar (
          evaluar @areaCirculo (@radio) finEval  
 
        }
+
+
+punto b. Factorial
+
+let-recursivo {
+  @fact(@x) = Si @x entonces
+(@x*evaluar @fact(sub1(@x)) finEval)
+sino 1 finSi
+} en evaluar @fact(5) finEval
+
+let-recursivo {
+  @fact(@x) = Si @x entonces
+(@x*evaluar @fact(sub1(@x)) finEval)
+sino 1 finSi
+} en evaluar @fact(10) finEval
 
 |#
