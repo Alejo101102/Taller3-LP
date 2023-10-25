@@ -170,9 +170,20 @@
 (define apply-unary-primitive
   (lambda (un-op val)
     (cases primitiva-unaria un-op
-      (primitiva-longitud () (string-length val))
+      (primitiva-longitud () (longitud-string val))
       (primitiva-add1 () (+ val 1))
       (primitiva-sub1 () (- val 1)))))
+
+;longitud-string: string --> int: determina la longitud de una cadena de texto
+;longitud-string-aux: (int string) --> int: determina la longitud de una cadena.
+; En cada iteración se obtiene un substring de la cadena original, se hace un llamado recursivo
+;y se almacena este conteo en la varriable contador.
+(define (longitud-string cadena)
+  (define (longitud-string-aux contador cadena)
+    (if (string=? cadena "")
+        contador
+        (longitud-string-aux (+ contador 1) (substring cadena 1))))
+  (longitud-string-aux 0 cadena))
 
 ;valor-verdad?: determina si un valor dado corresponde a un valor booleano falso o verdadero
 (define valor-verdad?
